@@ -37,4 +37,4 @@ This is a frontend interaction prototype, not a billing estimator. Exact attribu
 
 ## Status
 
-The proposal repository and interactive prototype are public. Publication to `openai/codex` was explicitly approved by Alexander on July 15, 2026.
+The proposal repository and interactive prototype are public. The approved request was published as [openai/codex#33433](https://github.com/openai/codex/issues/33433) on July 15, 2026.

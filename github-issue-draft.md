@@ -2,6 +2,8 @@
 
 **Title:** Codex Desktop: opt-in usage attribution by project and task
 
+**Published:** [openai/codex#33433](https://github.com/openai/codex/issues/33433)
+
 ## Feature Request
 
 ### Summary

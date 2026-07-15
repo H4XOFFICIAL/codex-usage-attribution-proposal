@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Codex Usage Attribution Proposal</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --canvas: #0d0f12;
+      --window: #121419;
+      --sidebar: #171a20;
+      --surface: #1c2027;
+      --surface-raised: #232832;
+      --surface-hover: #292f3a;
+      --line: #303642;
+      --line-soft: #272c35;
+      --text: #f4f6f8;
+      --muted: #a5adba;
+      --quiet: #777f8c;
+      --green: #7bd8b5;
+      --green-soft: rgba(123, 216, 181, .12);
+      --blue: #8cbcff;
+      --blue-soft: rgba(140, 188, 255, .12);
+      --amber: #f2c66d;
+      --amber-soft: rgba(242, 198, 109, .11);
+      --focus: #a8d8ff;
+      font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      background: var(--canvas);
+      color: var(--text);
+    }
+
+    button, input { font: inherit; }
+
+    button {
+      color: inherit;
+    }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    .shell {
+      width: min(1380px, calc(100vw - 32px));
+      min-height: calc(100vh - 32px);
+      margin: 16px auto;
+      overflow: hidden;
+      border: 1px solid #292e38;
+      border-radius: 8px;
+      background: var(--window);
+      box-shadow: 0 22px 70px rgba(0, 0, 0, .38);
+    }
+
+    .window-bar {
+      min-height: 42px;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--line-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #101217;
+    }
+
+    .window-brand,
+    .prototype-controls,
+    .inline-row,
+    .usage-heading,
+    .project-heading,
+    .task-heading,
+    .task-actions,
+    .usage-line,
+    .source-line,
+    .composer-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .window-brand { gap: 9px; }
+
+    .app-mark {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 5px;
+      background: var(--text);
+      color: #13161b;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .window-name { font-size: 12px; color: var(--muted); }
+
+    .concept-mark {
+      padding: 3px 6px;
+      border-radius: 4px;
+      background: var(--amber-soft);
+      color: var(--amber);
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .prototype-controls {
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .control-label {
+      margin-right: 2px;
+      color: var(--quiet);
+      font-size: 11px;
+    }
+
+    .button,
+    .segment,
+    .icon-button {
+      min-height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .button {
+      padding: 5px 10px;
+    }
+
+    .button:hover,
+    .segment:hover,
+    .icon-button:hover { background: var(--surface-hover); color: var(--text); }
+
+    .button.primary {
+      border-color: rgba(123, 216, 181, .36);
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .segment {
+      padding: 4px 9px;
+      font-size: 12px;
+    }
+
+    .segment[aria-pressed="true"] {
+      border-color: #515968;
+      background: var(--surface-raised);
+      color: var(--text);
+    }
+
+    .icon-button {
+      width: 30px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      font-size: 15px;
+    }
+
+    .app {
+      min-height: calc(100vh - 75px);
+      display: grid;
+      grid-template-columns: 330px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      min-width: 0;
+      border-right: 1px solid var(--line-soft);
+      background: var(--sidebar);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      height: 54px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .codex-title { display: flex; align-items: center; gap: 9px; font-weight: 600; }
+
+    .codex-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 4px var(--green-soft);
+    }
+
+    .new-task {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .global-usage {
+      margin: 12px 12px 8px;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .global-usage.is-compact .usage-detail { display: none; }
+
+    .usage-heading,
+    .project-heading,
+    .task-heading,
+    .usage-line {
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .usage-heading { align-items: flex-start; }
+
+    .eyebrow,
+    .meta,
+    .timestamp,
+    .supporting,
+    .event-meta,
+    .message-time {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .usage-value {
+      margin-top: 2px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .pin-button {
+      border: 0;
+      padding: 2px 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .pin-button:hover { color: var(--text); }
+
+    .meter {
+      height: 7px;
+      margin: 10px 0 7px;
+      overflow: hidden;
+      border-radius: 4px;
+      background: #2a3039;
+    }
+
+    .meter > span {
+      display: block;
+      width: var(--width);
+      height: 100%;
+      border-radius: inherit;
+      background: var(--green);
+      transition: width .25s ease;
+    }
+
+    .meter.context > span { background: var(--blue); }
+
+    .usage-line { color: var(--muted); font-size: 11px; }
+
+    .attribution-setting {
+      min-height: 42px;
+      margin: 0 12px 8px;
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .setting-copy strong { display: block; font-size: 12px; font-weight: 600; }
+    .setting-copy span { color: var(--quiet); font-size: 11px; }
+
+    .switch {
+      position: relative;
+      width: 34px;
+      height: 20px;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .switch-track {
+      width: 34px;
+      height: 20px;
+      display: block;
+      border: 1px solid #4a5260;
+      border-radius: 10px;
+      background: #303642;
+      cursor: pointer;
+    }
+
+    .switch-track::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #d7dbe1;
+      transition: transform .2s ease;
+    }
+
+    .switch input:checked + .switch-track {
+      border-color: rgba(123, 216, 181, .55);
+      background: rgba(123, 216, 181, .32);
+    }
+
+    .switch input:checked + .switch-track::after {
+      transform: translateX(14px);
+      background: var(--green);
+    }
+
+    .project-list {
+      min-height: 0;
+      padding: 0 8px 12px;
+      overflow-y: auto;
+    }
+
+    .project-group { margin-top: 3px; }
+
+    .project-button,
+    .task-button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .project-button {
+      padding: 9px 8px 7px;
+      border-radius: 6px;
+    }
+
+    .project-button:hover,
+    .task-button:hover { background: var(--surface); }
+
+    .project-name,
+    .task-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .project-name { font-size: 13px; font-weight: 600; }
+
+    .attribution-value {
+      flex: 0 0 auto;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .project-meta {
+      margin-top: 3px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--quiet);
+      font-size: 11px;
+    }
+
+    .task-list {
+      margin: 1px 0 5px 14px;
+      padding-left: 8px;
+      border-left: 1px solid var(--line);
+    }
+
+    .task-button {
+      position: relative;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .task-button.is-active { background: var(--blue-soft); }
+
+    .task-button.is-active::before {
+      content: "";
+      position: absolute;
+      left: -9px;
+      top: 9px;
+      bottom: 9px;
+      width: 2px;
+      background: var(--blue);
+    }
+
+    .task-heading { min-width: 0; }
+    .task-name { font-size: 12px; }
+    .task-button .meta { margin-top: 3px; color: var(--quiet); font-size: 11px; }
+
+    .sidebar.hide-attribution .attribution-value,
+    .sidebar.hide-attribution .project-update { display: none; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      min-height: 48px;
+      padding: 0 14px;
+      border-top: 1px solid var(--line-soft);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .avatar {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #38404c;
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .workspace {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    .task-header {
+      min-height: 66px;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--line-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .breadcrumb { margin-bottom: 4px; color: var(--quiet); font-size: 11px; }
+    .task-actions { gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 7px;
+      border-radius: 5px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 11px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .workspace-body {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(420px, 1fr) 342px;
+    }
+
+    .thread {
+      min-width: 0;
+      padding: 22px clamp(18px, 3vw, 40px) 18px;
+      overflow-y: auto;
+    }
+
+    .message {
+      max-width: 720px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .message-author {
+      margin-bottom: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .message p {
+      color: #dce0e6;
+      line-height: 1.55;
+    }
+
+    .work-log {
+      max-width: 720px;
+      margin-top: 14px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .work-row {
+      min-height: 34px;
+      padding: 7px 9px;
+      border: 1px solid var(--line-soft);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .work-row strong { color: var(--text); font-weight: 500; }
+
+    .check {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 10px;
+    }
+
+    .inline-row { min-width: 0; gap: 8px; }
+
+    .composer {
+      max-width: 720px;
+      min-height: 74px;
+      margin-top: 22px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .composer-placeholder { color: var(--quiet); font-size: 13px; }
+    .composer-actions { margin-top: 16px; justify-content: space-between; gap: 10px; }
+
+    .usage-panel {
+      min-width: 0;
+      border-left: 1px solid var(--line-soft);
+      background: #14171c;
+      overflow-y: auto;
+    }
+
+    .panel-header,
+    .usage-summary,
+    .usage-section,
+    .trust-note {
+      padding: 16px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .panel-header p { margin-top: 4px; color: var(--quiet); font-size: 11px; }
+
+    .source-badge {
+      flex: 0 0 auto;
+      padding: 4px 7px;
+      border-radius: 5px;
+      background: var(--amber-soft);
+      color: var(--amber);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .source-badge.is-official {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .metric-label { color: var(--muted); font-size: 11px; }
+
+    .credit-value {
+      margin-top: 5px;
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 600;
+    }
+
+    .credit-value span { color: var(--muted); font-size: 12px; font-weight: 400; }
+    .supporting { margin-top: 7px; line-height: 1.45; }
+
+    .event-list { margin-top: 11px; display: grid; gap: 0; }
+
+    .event-row {
+      position: relative;
+      min-height: 53px;
+      padding: 8px 0 8px 18px;
+      border-left: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .event-row::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      top: 13px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .event-title { font-size: 12px; font-weight: 600; }
+    .event-meta { margin-top: 3px; color: var(--quiet); font-size: 10px; line-height: 1.35; }
+    .event-amount { color: var(--green); font-size: 11px; font-weight: 600; }
+
+    .context-value { font-size: 14px; font-weight: 600; }
+
+    .separation-label {
+      margin-top: 10px;
+      padding: 7px 8px;
+      border-left: 2px solid var(--blue);
+      background: var(--blue-soft);
+      color: #cbdfff;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .trust-note {
+      border-bottom: 0;
+      background: var(--amber-soft);
+      color: #e8d4a5;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .trust-note.is-official {
+      background: var(--green-soft);
+      color: #c8eedf;
+    }
+
+    .event-toast {
+      position: fixed;
+      top: 62px;
+      right: 30px;
+      z-index: 10;
+      min-width: 258px;
+      padding: 10px 12px;
+      border: 1px solid rgba(123, 216, 181, .42);
+      border-radius: 7px;
+      background: #1b2825;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, .35);
+      color: var(--text);
+      opacity: 0;
+      transform: translateY(-8px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .event-toast.show { opacity: 1; transform: translateY(0); }
+    .event-toast strong { display: block; font-size: 12px; }
+    .event-toast span { display: block; margin-top: 3px; color: var(--green); font-size: 11px; }
+
+    .capture-mode .prototype-controls { display: none; }
+    .capture-mode .window-bar { justify-content: flex-start; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+
+    @media (max-width: 1050px) {
+      .workspace-body { grid-template-columns: 1fr; }
+      .usage-panel { border-top: 1px solid var(--line-soft); border-left: 0; }
+      .thread { overflow: visible; }
+    }
+
+    @media (max-width: 760px) {
+      .shell {
+        width: 100%;
+        min-height: 100vh;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+      }
+
+      .window-bar { align-items: flex-start; padding: 9px 10px; }
+      .app { grid-template-columns: 1fr; min-height: 0; }
+      .sidebar { border-right: 0; border-bottom: 1px solid var(--line-soft); }
+      .project-list { max-height: 380px; }
+      .sidebar-footer { display: none; }
+      .task-header { align-items: flex-start; }
+      .workspace-body { grid-template-columns: 1fr; }
+      .thread { padding: 18px 14px; }
+      .usage-panel { border-left: 0; }
+      .event-toast { top: 10px; right: 10px; left: 10px; min-width: 0; }
+    }
+
+    @media (max-width: 480px) {
+      .window-brand .window-name,
+      .control-label { display: none; }
+      .prototype-controls { gap: 4px; }
+      .segment, .button { padding-right: 7px; padding-left: 7px; }
+      .task-header { display: block; }
+      .task-actions { margin-top: 10px; justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell" id="shell">
+    <header class="window-bar">
+      <div class="window-brand">
+        <span class="app-mark" aria-hidden="true">O</span>
+        <span class="window-name">ChatGPT for Windows</span>
+        <span class="concept-mark">CONCEPT - SIMULATED VALUES</span>
+      </div>
+      <div class="prototype-controls" aria-label="Prototype controls">
+        <span class="control-label">Data source</span>
+        <button class="segment" id="simulatedButton" type="button" aria-pressed="true">Simulated</button>
+        <button class="segment" id="provisionalButton" type="button" aria-pressed="false">Provisional</button>
+        <button class="segment" id="officialButton" type="button" aria-pressed="false">Official</button>
+        <button class="button primary" id="eventButton" type="button">Receive tagged event</button>
+        <button class="button" id="resetButton" type="button">Reset</button>
+      </div>
+    </header>
+
+    <main class="app">
+      <aside class="sidebar" id="sidebar" aria-label="Codex projects">
+        <div class="sidebar-header">
+          <div class="codex-title"><span class="codex-dot" aria-hidden="true"></span>Codex</div>
+          <button class="new-task" type="button" aria-label="New task">+</button>
+        </div>
+
+        <section class="global-usage" id="globalUsage" aria-label="Pinned weekly allowance">
+          <div class="usage-heading">
+            <div>
+              <div class="eyebrow">Weekly allowance</div>
+              <div class="usage-value"><span id="globalPercent">68</span>% used</div>
+            </div>
+            <button class="pin-button" id="pinButton" type="button" aria-expanded="true">Pinned</button>
+          </div>
+          <div class="usage-detail">
+            <div class="meter" aria-label="68 percent of weekly allowance used"><span id="globalMeter" style="--width:68%"></span></div>
+            <div class="usage-line"><span id="globalCredits">1,360 of 2,000 credits</span><span>Resets Mon, 09:00</span></div>
+          </div>
+        </section>
+
+        <div class="attribution-setting">
+          <div class="setting-copy"><strong>Usage attribution</strong><span>Show totals under projects</span></div>
+          <label class="switch" aria-label="Show usage attribution">
+            <input type="checkbox" id="attributionToggle" checked>
+            <span class="switch-track" aria-hidden="true"></span>
+          </label>
+        </div>
+
+        <nav class="project-list" id="projectList" aria-label="Projects and tasks"></nav>
+
+        <div class="sidebar-footer"><span class="avatar">A</span><span>Alexander</span></div>
+      </aside>
+
+      <section class="workspace">
+        <header class="task-header">
+          <div>
+            <div class="breadcrumb">Codex UX Proposals / Proposal refinement</div>
+            <h1 id="selectedTaskTitle">Usage-aware sidebar proposal</h1>
+          </div>
+          <div class="task-actions">
+            <span class="status"><span class="status-dot" aria-hidden="true"></span>Completed</span>
+            <button class="icon-button" type="button" aria-label="More task actions">...</button>
+          </div>
+        </header>
+
+        <div class="workspace-body">
+          <article class="thread" aria-label="Task conversation">
+            <section class="message">
+              <div class="message-author"><span>You</span><span class="message-time">Today, 14:32</span></div>
+              <p>Refine the Codex usage proposal so it is clear which project and task consumed allowance. Keep context-window usage separate and make the result ready for review.</p>
+            </section>
+
+            <section class="message">
+              <div class="message-author"><span>Codex</span><span class="message-time">Today, 14:38</span></div>
+              <p>The proposal now treats the global allowance bar as supporting context. The main interaction is opt-in attribution directly beneath each project and task, updated when official usage events arrive.</p>
+            </section>
+
+            <div class="work-log" aria-label="Completed work">
+              <div class="work-row"><span class="inline-row"><span class="check" aria-hidden="true">OK</span><strong>One-page UX specification</strong></span><span>Ready</span></div>
+              <div class="work-row"><span class="inline-row"><span class="check" aria-hidden="true">OK</span><strong>Interactive desktop mockup</strong></span><span>Ready</span></div>
+              <div class="work-row"><span class="inline-row"><span class="check" aria-hidden="true">OK</span><strong>Usage event states</strong></span><span>Ready</span></div>
+            </div>
+
+            <div class="composer" aria-label="Message composer">
+              <div class="composer-placeholder">Ask Codex to make a change</div>
+              <div class="composer-actions"><span class="meta">Local workspace</span><button class="icon-button" type="button" aria-label="Send message">&uarr;</button></div>
+            </div>
+          </article>
+
+          <aside class="usage-panel" aria-label="Selected task usage details">
+            <div class="panel-header">
+              <div><h2>Task usage</h2><p id="freshness">Updated just now</p></div>
+              <span class="source-badge" id="sourceBadge">SIMULATED SOURCE</span>
+            </div>
+
+            <section class="usage-summary" aria-labelledby="allowanceHeading">
+              <div class="metric-label" id="allowanceHeading">Attributed allowance</div>
+              <div class="credit-value"><span id="taskCredits">124</span> <span>credits</span></div>
+              <div class="meter" aria-label="Task used 31 percent of project usage"><span id="taskMeter" style="--width:31%"></span></div>
+              <p class="supporting" id="projectShare">31% of Codex UX Proposals usage in this reset window.</p>
+            </section>
+
+            <section class="usage-section" aria-labelledby="recentHeading">
+              <div class="usage-line"><h3 id="recentHeading">Recent usage</h3><span id="eventWindow">This reset window</span></div>
+              <div class="event-list" id="eventList"></div>
+            </section>
+
+            <section class="usage-section" aria-labelledby="contextHeading">
+              <div class="usage-line"><h3 id="contextHeading">Context window</h3><span class="context-value" id="contextValue">41%</span></div>
+              <div class="meter context" aria-label="Context window is 41 percent full"><span id="contextMeter" style="--width:41%"></span></div>
+              <div class="separation-label">Working memory for this task. It is not plan or credit usage.</div>
+            </section>
+
+            <div class="trust-note" id="trustNote">Prototype values are simulated. Authoritative attribution requires official usage events tagged with project and task IDs.</div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="event-toast" id="eventToast" role="status" aria-live="polite">
+    <strong>Tagged usage event received</strong>
+    <span>+24 credits / reconciliation pending</span>
+  </div>
+
+  <script>
+    const initialProjects = [
+      {
+        name: "Codex UX Proposals",
+        usage: 412,
+        updated: "Updated just now",
+        open: true,
+        tasks: [
+          { name: "Usage-aware sidebar proposal", usage: 124, updated: "Just now", context: 41 },
+          { name: "One-page spec polish", usage: 82, updated: "6 min ago", context: 26 },
+          { name: "Screenshot-ready mockup", usage: 206, updated: "18 min ago", context: 58 }
+        ]
+      },
+      {
+        name: "Windows app interaction notes",
+        usage: 188,
+        updated: "Updated 32 min ago",
+        open: false,
+        tasks: [
+          { name: "Pinned status placement", usage: 61, updated: "32 min ago", context: 33 },
+          { name: "Sidebar density review", usage: 127, updated: "48 min ago", context: 47 }
+        ]
+      },
+      {
+        name: "Research backlog",
+        usage: 96,
+        updated: "Updated 1 hr ago",
+        open: false,
+        tasks: [
+          { name: "Issue comparison notes", usage: 42, updated: "1 hr ago", context: 19 },
+          { name: "Metering language audit", usage: 54, updated: "2 hr ago", context: 21 }
+        ]
+      }
+    ];
+
+    let projects = structuredClone(initialProjects);
+    let selectedProject = 0;
+    let selectedTask = 0;
+    let sourceState = "simulated";
+    let eventReceived = false;
+    let toastTimer;
+
+    const shell = document.getElementById("shell");
+    const sidebar = document.getElementById("sidebar");
+    const projectList = document.getElementById("projectList");
+    const simulatedButton = document.getElementById("simulatedButton");
+    const provisionalButton = document.getElementById("provisionalButton");
+    const officialButton = document.getElementById("officialButton");
+    const sourceBadge = document.getElementById("sourceBadge");
+    const trustNote = document.getElementById("trustNote");
+    const eventToast = document.getElementById("eventToast");
+
+    function getSelectedTask() {
+      return projects[selectedProject].tasks[selectedTask];
+    }
+
+    function renderProjects() {
+      projectList.innerHTML = "";
+      projects.forEach((project, projectIndex) => {
+        const group = document.createElement("section");
+        group.className = "project-group";
+
+        const projectButton = document.createElement("button");
+        projectButton.type = "button";
+        projectButton.className = "project-button";
+        projectButton.setAttribute("aria-expanded", String(project.open));
+        projectButton.innerHTML = `
+          <span class="project-heading">
+            <span class="project-name">${project.name}</span>
+            <span class="attribution-value">${project.usage} credits</span>
+          </span>
+          <span class="project-meta"><span>${project.open ? "Hide tasks" : "Show tasks"}</span><span class="project-update">${project.updated}</span></span>
+        `;
+        projectButton.addEventListener("click", () => {
+          project.open = !project.open;
+          selectedProject = projectIndex;
+          if (selectedTask >= project.tasks.length) selectedTask = 0;
+          render();
+        });
+        group.appendChild(projectButton);
+
+        if (project.open) {
+          const taskList = document.createElement("div");
+          taskList.className = "task-list";
+          project.tasks.forEach((task, taskIndex) => {
+            const taskButton = document.createElement("button");
+            taskButton.type = "button";
+            taskButton.className = `task-button${projectIndex === selectedProject && taskIndex === selectedTask ? " is-active" : ""}`;
+            taskButton.innerHTML = `
+              <span class="task-heading">
+                <span class="task-name">${task.name}</span>
+                <span class="attribution-value">${task.usage} cr</span>
+              </span>
+              <span class="meta">${task.updated}</span>
+            `;
+            taskButton.addEventListener("click", (event) => {
+              event.stopPropagation();
+              selectedProject = projectIndex;
+              selectedTask = taskIndex;
+              render();
+            });
+            taskList.appendChild(taskButton);
+          });
+          group.appendChild(taskList);
+        }
+
+        projectList.appendChild(group);
+      });
+    }
+
+    function renderUsage() {
+      const project = projects[selectedProject];
+      const task = getSelectedTask();
+      const isProvisional = sourceState === "provisional";
+      const isOfficial = sourceState === "official";
+      const globalUsed = 1360 + (eventReceived ? 24 : 0);
+      const globalPercent = Math.round(globalUsed / 20);
+      const share = Math.round((task.usage / project.usage) * 100);
+
+      document.getElementById("selectedTaskTitle").textContent = task.name;
+      document.getElementById("taskCredits").textContent = task.usage;
+      document.getElementById("taskMeter").style.setProperty("--width", `${share}%`);
+      document.getElementById("projectShare").textContent = `${share}% of ${project.name} usage in this reset window.`;
+      document.getElementById("contextValue").textContent = `${task.context}%`;
+      document.getElementById("contextMeter").style.setProperty("--width", `${task.context}%`);
+      document.getElementById("globalPercent").textContent = globalPercent;
+      document.getElementById("globalCredits").textContent = `${globalUsed.toLocaleString()} of 2,000 credits`;
+      document.getElementById("globalMeter").style.setProperty("--width", `${globalPercent}%`);
+      document.getElementById("freshness").textContent = isOfficial
+        ? "Reconciled official event / 2 min ago"
+        : isProvisional
+          ? "Tagged event received / reconciliation pending"
+          : "Updated just now";
+
+      simulatedButton.setAttribute("aria-pressed", String(sourceState === "simulated"));
+      provisionalButton.setAttribute("aria-pressed", String(isProvisional));
+      officialButton.setAttribute("aria-pressed", String(isOfficial));
+      sourceBadge.textContent = isOfficial
+        ? "RECONCILED EVENT"
+        : isProvisional
+          ? "PROVISIONAL EVENT"
+          : "SIMULATED SOURCE";
+      sourceBadge.classList.toggle("is-official", isOfficial);
+      trustNote.classList.toggle("is-official", isOfficial);
+      trustNote.textContent = isOfficial
+        ? "Prototype state showing a reconciled official event. Values remain simulated; context-window fullness remains a separate runtime measure."
+        : isProvisional
+          ? "A tagged event has been attributed to this project and task, but totals can change until metering reconciliation completes. Values remain simulated."
+          : "Prototype values are simulated. Authoritative attribution requires official usage events tagged with project and task IDs.";
+
+      const eventSource = isOfficial
+        ? "Reconciled event state"
+        : isProvisional
+          ? "Provisional event state"
+          : "Simulated event";
+
+      const events = [
+        { title: eventReceived ? "Metered execution completed" : "Proposal refinement", amount: eventReceived ? 24 : Math.max(18, Math.round(task.usage * .42)), meta: `${eventSource} / desktop / Codex model` },
+        { title: "Workspace analysis", amount: Math.max(12, Math.round(task.usage * .31)), meta: `${eventSource} / desktop / Codex model` },
+        { title: "Mockup verification", amount: Math.max(9, Math.round(task.usage * .18)), meta: `${eventSource} / cloud / Codex model` }
+      ];
+
+      const eventList = document.getElementById("eventList");
+      eventList.innerHTML = "";
+      events.forEach((event, index) => {
+        const row = document.createElement("div");
+        row.className = "event-row";
+        row.innerHTML = `
+          <span><span class="event-title">${event.title}</span><span class="event-meta">${index === 0 ? "Just now" : `${index * 14 + 4} min ago`}<br>${event.meta}</span></span>
+          <span class="event-amount">+${event.amount} cr</span>
+        `;
+        eventList.appendChild(row);
+      });
+    }
+
+    function render() {
+      renderProjects();
+      renderUsage();
+    }
+
+    function setSource(state) {
+      sourceState = state;
+      renderUsage();
+    }
+
+    function receiveEvent(showToast = true) {
+      if (!eventReceived) {
+        const project = projects[selectedProject];
+        const task = getSelectedTask();
+        task.usage += 24;
+        task.updated = "Just now";
+        project.usage += 24;
+        project.updated = "Updated just now";
+        eventReceived = true;
+      }
+      sourceState = "provisional";
+      render();
+      if (showToast) {
+        eventToast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => eventToast.classList.remove("show"), 4200);
+      }
+    }
+
+    simulatedButton.addEventListener("click", () => setSource("simulated"));
+    provisionalButton.addEventListener("click", () => setSource("provisional"));
+    officialButton.addEventListener("click", () => setSource("official"));
+    document.getElementById("eventButton").addEventListener("click", () => receiveEvent(true));
+
+    document.getElementById("resetButton").addEventListener("click", () => {
+      projects = structuredClone(initialProjects);
+      selectedProject = 0;
+      selectedTask = 0;
+      sourceState = "simulated";
+      eventReceived = false;
+      eventToast.classList.remove("show");
+      document.getElementById("attributionToggle").checked = true;
+      sidebar.classList.remove("hide-attribution");
+      document.getElementById("globalUsage").classList.remove("is-compact");
+      document.getElementById("pinButton").textContent = "Pinned";
+      document.getElementById("pinButton").setAttribute("aria-expanded", "true");
+      clearTimeout(toastTimer);
+      render();
+    });
+
+    document.getElementById("attributionToggle").addEventListener("change", (event) => {
+      sidebar.classList.toggle("hide-attribution", !event.target.checked);
+    });
+
+    document.getElementById("pinButton").addEventListener("click", (event) => {
+      const usage = document.getElementById("globalUsage");
+      const compact = usage.classList.toggle("is-compact");
+      event.currentTarget.textContent = compact ? "Show" : "Pinned";
+      event.currentTarget.setAttribute("aria-expanded", String(!compact));
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("capture") === "1") shell.classList.add("capture-mode");
+    if (params.get("state") === "official") sourceState = "official";
+    if (params.get("state") === "provisional") sourceState = "provisional";
+    if (params.get("state") === "event") receiveEvent(params.get("toast") !== "0");
+    else render();
+  </script>
+</body>
+</html>

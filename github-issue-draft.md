@@ -2,8 +2,6 @@
 
 **Title:** Codex Desktop: opt-in usage attribution by project and task
 
-> Publication status: local draft for Alexander's review. Links and images must be inserted after explicit publication approval.
-
 ## Feature Request
 
 ### Summary
@@ -44,22 +42,15 @@ This request does not duplicate the global indicator. Its focus is attribution w
 
 ### Prototype
 
-- Interactive prototype: `[insert repository or hosted prototype link after approval]`
-- UX specification: `[insert specification link after approval]`
-- Normal attributed view: `[attach image after approval]`
-- Incoming provisional event: `[attach image after approval]`
+- [Interactive prototype](https://h4xofficial.github.io/codex-usage-attribution-proposal/)
+- [One-page UX specification](https://github.com/H4XOFFICIAL/codex-usage-attribution-proposal/blob/main/usage-visibility-spec.md)
+
+Normal attributed view:
+
+![Normal attributed view](https://raw.githubusercontent.com/H4XOFFICIAL/codex-usage-attribution-proposal/main/usage-visibility-mockup.png)
+
+Incoming provisional event:
+
+![Incoming provisional event](https://raw.githubusercontent.com/H4XOFFICIAL/codex-usage-attribution-proposal/main/usage-visibility-provisional-event.png)
 
 All prototype values are simulated and visibly labeled.
-
----
-
-## Review Checklist - Not Part of the Published Issue
-
-- [ ] Alexander approves the title and issue body.
-- [ ] Final normal-state screenshot replaces the initial concept capture.
-- [ ] Final provisional-event screenshot is attached.
-- [ ] Repository links are public and contain no private paths or account data.
-- [ ] The interactive mockup opens without a build step.
-- [ ] No claim implies that local estimates are authoritative.
-- [ ] Publication destination is confirmed as `openai/codex`.
-- [ ] Alexander explicitly approves publication immediately before posting.

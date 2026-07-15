@@ -15,10 +15,11 @@ The global bar complements [openai/codex#24182](https://github.com/openai/codex/
 
 ## Review Package
 
-- [Interactive mockup](index.html)
+- [Live interactive mockup](https://h4xofficial.github.io/codex-usage-attribution-proposal/)
 - [One-page UX specification](usage-visibility-spec.md)
 - [GitHub issue draft](github-issue-draft.md)
-- `usage-visibility-mockup.png`: initial attributed-view capture retained for comparison
+- `usage-visibility-mockup.png`: normal attributed view
+- `usage-visibility-provisional-event.png`: incoming provisional event
 
 Open `index.html` directly in a browser. The controls switch between simulated, provisional, and reconciled-event states; receive a deterministic tagged event; reset the state; hide attribution; and collapse the global bar.
 
@@ -36,4 +37,4 @@ This is a frontend interaction prototype, not a billing estimator. Exact attribu
 
 ## Status
 
-Ready for Alexander's review. Do not publish, upload, comment, or submit externally without explicit approval.
+The proposal repository and interactive prototype are public. Publication to `openai/codex` was explicitly approved by Alexander on July 15, 2026.
